@@ -1,7 +1,7 @@
 {"1.1.0",
 [{<<"aebytecode">>,
   {git,"https://github.com/aeternity/aebytecode.git",
-      {ref,"a66dc0a97facdeaad7e5403018ad195d989e4793"}},
+      {ref,"f184abeb879dede9f6990d6ae06c3e9f137e57f5"}},
   0},
  {<<"aecuckoo">>,
   {git,"https://github.com/aeternity/aecuckoo.git",
