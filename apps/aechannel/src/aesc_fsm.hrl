@@ -10,6 +10,7 @@
 -define(REESTABLISH_OPTS_KEYS,
     [ existing_channel_id
     , offchain_tx
+    , existing_fsm_id_wrapper
     ]).
 
 -define(CONNECT_OPTS_KEYS,
@@ -163,10 +164,9 @@
               , client_mref                     :: undefined | reference()
               , client_connected = true         :: boolean()
               , client_may_disconnect = false   :: boolean()
-              , client_reconnect_nonce = 0      :: non_neg_integer()
               , peer_connected = false          :: boolean()
               , opts                            :: map()
-              , state_password_wrapper          :: undefined | aesc_state_password_wrapper:wrapper()
+              , fsm_id_wrapper                  :: undefined | aesc_fsm_id:wrapper()
               , channel_id                      :: undefined | binary()
               , on_chain_id                     :: undefined | binary()
               , create_tx                       :: undefined | any()
@@ -290,8 +290,3 @@
 -define(DEFAULT_FSM_TX_TTL_DELTA, 100).
 
 -type next_fsm_state() :: {next_state, atom(), #data{}, list()}.
-
-%% TODO: Make this configurable
-%% No need for a stronger password policy
-%% This check is only here to ensure that someone doesn't enter a 1-2 character password
--define(STATE_PASSWORD_MINIMUM_LENGTH, 6).

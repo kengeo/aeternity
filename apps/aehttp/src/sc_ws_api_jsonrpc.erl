@@ -177,7 +177,7 @@ json_rpc_error_object(participant_not_found, R) -> error_obj(3, [1011], R);
 json_rpc_error_object(not_offchain_tx      , R) -> error_obj(2, [1012], R);
 json_rpc_error_object(already_onchain      , R) -> error_obj(3, [1013], R);
 json_rpc_error_object({meta, invalid}      , R) -> error_obj(3, [1014], R);
-json_rpc_error_object(invalid_password     , R) -> error_obj(3, [1016], R);
+json_rpc_error_object(invalid_fsm_id       , R) -> error_obj(3, [1016], R);
 json_rpc_error_object(bad_signature        , R) -> error_obj(3, [1017], R);
 json_rpc_error_object({broken_encoding,What}, R) ->
     error_obj(3, [broken_encoding_code(W) || W <- What], R);
@@ -256,9 +256,9 @@ error_data_msgs() ->
      , 1013 => <<"Tx already on-chain">>
      , 1014 => <<"Invalid meta object">>
      , 1015 => <<"Invalid error code (expect 1...65535)">>
-     , 1016 => <<"Invalid password">>
+     , 1016 => <<"Invalid fsm id">>
      , 1017 => <<"Bad signature">>
-     , 2000 => <<"Missing field: state_password">>
+     , 2000 => <<"Missing field: existing_fsm_id">>
      }.
 
 broken_encoding_code(account    ) -> 1005;
@@ -267,7 +267,7 @@ broken_encoding_code(bytearray  ) -> 1009;
 broken_encoding_code(transaction) -> 1010.
 
 %% TODO: Add more error codes and create a PT for it
-missing_field_code(state_password) -> 2000.
+missing_field_code(existing_fsm_id) -> 2000.
 
 process_incoming(Msg, FsmPid) ->
     ResRev =
@@ -596,14 +596,6 @@ process_request(#{<<"method">> := <<"channels.settle">>}, FsmPid) ->
         ok -> no_reply;
         {error, _Reason} = Err -> Err
     end;
-process_request(#{<<"method">> := <<"channels.change_state_password">>,
-                  <<"params">> := #{<<"state_password">> := StatePassword}}, FsmPid) ->
-    case aesc_fsm:change_state_password(FsmPid, StatePassword) of
-        ok -> {reply, ok_response(password_changed)};
-        {error, invalid_password} -> {error, invalid_password} %% Just let it crash for other error codes
-    end;
-process_request(#{<<"method">> := <<"channels.change_state_password">>}, _FsmPid) ->
-    {error, {state_password, missing}};
 process_request(#{<<"method">> := _} = Unhandled, _FsmPid) ->
     lager:warning("Channel WS: unhandled action received ~p", [Unhandled]),
     {error, unhandled};
