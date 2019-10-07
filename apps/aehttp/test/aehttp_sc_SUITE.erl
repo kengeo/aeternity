@@ -956,14 +956,15 @@ sc_ws_close_(ConfigList) ->
                     catch
                         %% when the WebSocket process dies, it emmits a
                         %% {connpid_died, Reason} message
-                        error:{connpid_died, Reason} when Reason == {error,closed}
+                        error:{connpid_died, Reason} when Reason == {error, closed}
+                                                        ; Reason == {error, einval}
                                                         ; Reason == noproc
                                                         ; Reason == normal ->
                             ok
                     end
             end,
-    Close(IConnPid),
     Close(RConnPid),
+    Close(IConnPid),
     ok.
 
 sc_ws_get_balance(ConnPid, PubKey, Config) ->
@@ -1181,7 +1182,6 @@ sc_ws_close_solo_(Config, Closer) when Closer =:= initiator;
 
     {ok, 200, #{<<"transactions">> := []}} = get_pending_transactions(),
     ?PEEK_MSGQ,
-    settle_(Config, Closer),
     ok = ?WS:unregister_test_for_channel_events(IConnPid, [info]),
     ok = ?WS:unregister_test_for_channel_events(RConnPid, [info]),
     ok.
