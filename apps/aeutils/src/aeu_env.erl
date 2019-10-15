@@ -437,7 +437,6 @@ lst(E) -> [E].
 
 -ifdef(TEST).
 update_config(Map) when is_map(Map) ->
-    Tree = to_tree(Map),
     Schema = application:get_env(aeutils, '$schema', #{}),
     check_validation([jesse:validate_with_schema(Schema, Map, [])],
                      [Map], update_config, report),

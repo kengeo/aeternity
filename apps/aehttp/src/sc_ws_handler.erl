@@ -246,7 +246,7 @@ handler_init_error(Err, Handler) ->
                     {channel_reserve_too_low      , value_too_low},
                     {push_amount_too_low          , value_too_low},
                     {lock_period_too_low          , value_too_low},
-                    {limit_exceeded               , limit_exceeded},
+                    {channel_count_limit_exceeded , channel_count_limit_exceeded},
                     {invalid_password             , invalid_password},
                     {bad_signature                , bad_signature},
                     {password_required_since_lima , {state_password, missing}}
